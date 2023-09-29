@@ -16,7 +16,19 @@ struct Conditional {
 }
 
 impl Conditional {
-    pub fn print_with_data(&self, input: &Vec<String>) -> Result<(), Box<dyn Error>> {
+    pub fn print_with_data(&self, input: &Vec<String>) {
+        match self.name.as_str() {
+            "if" => {
+                self.print_if_statements(input).expect("Couldn't print 'if' statements");
+            }
+            "assert" => {
+                self.print_assert_statements(input).expect("Couldn't print 'assert' statements");
+            }
+            _ => {}
+        }
+    }
+
+    pub fn print_if_statements(&self, input: &Vec<String>) -> Result<(), Box<dyn Error>> {
         let mut reg = Handlebars::new();
 
         for eachInput in input {
@@ -38,6 +50,29 @@ impl Conditional {
         }
         Ok(())
     }
+
+    pub fn print_assert_statements(&self, input: &Vec<String>) -> Result<(), Box<dyn Error>> {
+        let mut reg = Handlebars::new();
+
+        for eachInput in input {
+
+            match self.input_type {
+                DataType::U32 => {
+                    println!(
+                        "{}",
+                        reg.render_template("assert(checkVariable == {{input1}})", &json!({"input1": eachInput }))?
+                    );
+                }
+                DataType::String => {
+                    println!(
+                        "{}",
+                        reg.render_template("assert(checkVariable == \"{{input1}}\")", &json!({"input1": eachInput }))?
+                    );
+                }
+            }
+        }
+        Ok(())
+    }
 }
 
 fn main() {
@@ -45,13 +80,25 @@ fn main() {
 
     for eachConditional in conditionals {
         for eachVarType in random_data_creator::DataType::iter() {
-            if eachConditional == "if" {
-                let random_u32s = random_data_creator::generate_random(eachVarType, 5);
-                let if_conditional: Conditional = Conditional {
-                    name: String::from("if"),
-                    input_type: eachVarType
-                };
-                if_conditional.print_with_data(&random_u32s).expect("couldn't print 'if' data.");
+
+            match eachConditional {
+                "if" => {
+                    let random_data = random_data_creator::generate_random(eachVarType, 5);
+                    let conditional: Conditional = Conditional {
+                        name: String::from("if"),
+                        input_type: eachVarType
+                    };
+                    conditional.print_with_data(&random_data);
+                }
+                "assert" => {
+                    let random_data = random_data_creator::generate_random(eachVarType, 5);
+                    let conditional: Conditional = Conditional {
+                        name: String::from("assert"),
+                        input_type: eachVarType
+                    };
+                    conditional.print_with_data(&random_data);
+                }
+                _ => {}
             }
         }
     }
