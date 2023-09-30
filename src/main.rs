@@ -3,8 +3,7 @@ mod random_data_creator;
 mod conditionals;
 use strum::IntoEnumIterator;
 use std::time::{SystemTime, UNIX_EPOCH};
-
-
+use crate::random_data_creator::DataType;
 
 
 fn main() {
@@ -13,10 +12,13 @@ fn main() {
 
     for eachConditional in conditionals {
         for eachVarType in random_data_creator::DataType::iter() {
-
+            let random_data = random_data_creator::generate_random(eachVarType, 2000);
             match eachConditional {
                 "if" => {
-                    let random_data = random_data_creator::generate_random(eachVarType, 100);
+
+                    if eachVarType == DataType::String {
+                        continue
+                    }
                     let conditional: conditionals::Conditional = conditionals::Conditional {
                         name: String::from("if"),
                         input_type: eachVarType
@@ -24,7 +26,6 @@ fn main() {
                     conditional.print_with_data(&random_data, &file_name_prefix);
                 }
                 "assert" => {
-                    let random_data = random_data_creator::generate_random(eachVarType, 100);
                     let conditional: conditionals::Conditional = conditionals::Conditional {
                         name: String::from("assert"),
                         input_type: eachVarType
