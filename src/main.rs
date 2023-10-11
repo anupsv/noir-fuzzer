@@ -11,11 +11,10 @@ fn main() {
     let file_name_prefix: String = SystemTime::now().duration_since(UNIX_EPOCH).expect("guess we can go to the past huh!").as_secs().to_string();
 
     for eachConditional in conditionals {
-        for eachVarType in random_data_creator::DataType::iter() {
+        for eachVarType in DataType::iter() {
             let random_data = random_data_creator::generate_random(eachVarType, 2000);
             match eachConditional {
                 "if" => {
-
                     if eachVarType == DataType::String {
                         continue
                     }

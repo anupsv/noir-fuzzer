@@ -3,13 +3,14 @@ extern crate rand;
 use std::iter;
 use rand::Rng;
 use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
+use strum_macros::{Display, EnumIter};
 use std::any::Any;
 use std::any::TypeId;
-#[derive(EnumIter, Debug, PartialEq, Clone, Copy)]
+#[derive(EnumIter, Debug, PartialEq, Clone, Copy, Display)]
 pub(crate) enum DataType {
     U32,
-    String
+    String,
+    Bool
 }
 pub(crate) fn generate_random(data_type: DataType, count: usize) -> Vec<String> {
     let mut rng = rand::thread_rng();
@@ -31,6 +32,10 @@ pub(crate) fn generate_random(data_type: DataType, count: usize) -> Vec<String> 
                     .collect();
                 results.push(random_string);
             }
+        }
+        DataType::Bool => {
+            results.push("true".to_string());
+            results.push("false".to_string());
         }
     }
     results
