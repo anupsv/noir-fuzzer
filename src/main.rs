@@ -7,7 +7,7 @@ use crate::random_data_creator::DataType;
 
 
 fn main() {
-    let conditionals: [&str; 1] = ["array"];
+    let conditionals: [&str; 1] = ["loop"];
     // let conditionals: [&str; 2] = ["if", "assert", "array"];
     let file_name_prefix: String = SystemTime::now().duration_since(UNIX_EPOCH).expect("guess we can go to the past huh!").as_secs().to_string();
 
@@ -32,6 +32,13 @@ fn main() {
                 "array" => {
                     let conditional: conditionals::Conditional = conditionals::Conditional {
                         name: String::from("array"),
+                        input_type: eachVarType
+                    };
+                    conditional.print_with_data(&random_data, &file_name_prefix);
+                }
+                "loop" => {
+                    let conditional: conditionals::Conditional = conditionals::Conditional {
+                        name: String::from("loop"),
                         input_type: eachVarType
                     };
                     conditional.print_with_data(&random_data, &file_name_prefix);
