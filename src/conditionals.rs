@@ -45,13 +45,15 @@ impl Conditional {
             DataType::U32 => {
                 let joined = input.join(", ");
                 rust_data.push_str(&*(reg.render_template("\n\tlet mut a: [u32; {{input1}}] = [{{input0}}];", &json!({"input0": joined, "input1": input.len() })).expect("could render data for joined array list") + "\n"));
-                noir_data.push_str(&*(reg.render_template("\n\tlet a = [{{input0}}];", &json!({"input0": joined })).expect("could render data for joined array list") + "\n"));
+                noir_data.push_str(&*(reg.render_template("\n\tlet mut a = [{{input0}}];", &json!({"input0": joined })).expect("could render data for joined array list") + "\n"));
                 let mut rng = rand::thread_rng();
 
                 for i in 0..(input.len()){
                     let random_index = rng.gen_range(0..(input.len()));
-                    rust_data.push_str(&*(reg.render_template("\n\tif a[{{input0}}] == {{input1}} {println!(\"{}\", format!(\"\\\"0x{:x}\\\"\", {{input0}} as u32));}", &json!({"input0": random_index, "input1": input[random_index] })).expect("Couldn't render if for U32 data in array.") + "\n"));
+                    rust_data.push_str(&*(reg.render_template("\n\tif a[{{input0}}] == {{input1}} {println!(\"{}\", format!(\"\\\"0x{:x}\\\"\", {{input1}} as u32));}", &json!({"input0": random_index, "input1": input[random_index] })).expect("Couldn't render if for U32 data in array.") + "\n"));
+                    rust_data.push_str(&*(reg.render_template("\tassert!(a[{{input0}}] == {{input1}});", &json!({"input0": random_index, "input1": input[random_index] })).expect("Couldn't render assert for u32 data.") + "\n"));
                     noir_data.push_str(&*(reg.render_template("\n\tif a[{{input0}}] == {{input1}} {std::println({{input1}});}", &json!({"input0": random_index, "input1": input[random_index] })).expect("Couldn't render if for U32 data in array.") + "\n"));
+                    noir_data.push_str(&*(reg.render_template("\n\tassert(a[{{input0}}] == {{input1}});", &json!({"input0": random_index, "input1": input[random_index] })).expect("Couldn't render if for U32 data in array.") + "\n"));
                 }
 
                 let random_index = rng.gen_range(0..(input.len()));
@@ -68,8 +70,13 @@ impl Conditional {
 
                 rust_data.push_str(&*(reg.render_template("\n\tif {{input1}} {println!(\"{}\", {{input1}});}", &json!({"input1": "a[0]" })).expect("Couldn't render if for bool data.") + "\n"));
                 noir_data.push_str(&*(reg.render_template("\n\tif {{input1}} {std::println({{input1}});}", &json!({"input1": "a[0]" })).expect("Couldn't render if for bool data.") + "\n"));
+                rust_data.push_str(&*(reg.render_template("\n\tassert!({{input1}} == true);", &json!({"input1": "a[0]" })).expect("Couldn't render if for bool data.") + "\n"));
+                noir_data.push_str(&*(reg.render_template("\n\tassert({{input1}} == true);", &json!({"input1": "a[0]" })).expect("Couldn't render if for bool data.") + "\n"));
+
                 rust_data.push_str(&*(reg.render_template("\n\tif {{input1}} {println!(\"false\");}", &json!({"input1": "!a[1]" })).expect("Couldn't render if for bool data.") + "\n"));
                 noir_data.push_str(&*(reg.render_template("\n\tif {{input1}} {std::println(false);}", &json!({"input1": "!a[1]" })).expect("Couldn't render if for bool data.") + "\n"));
+                rust_data.push_str(&*(reg.render_template("\tassert!({{input1}} == false);", &json!({"input1": "a[1]" })).expect("Couldn't render if for bool data.") + "\n"));
+                noir_data.push_str(&*(reg.render_template("\n\tassert({{input1}} == false);", &json!({"input1": "a[1]" })).expect("Couldn't render if for bool data.") + "\n"));
             }
             _ => {}
         }
