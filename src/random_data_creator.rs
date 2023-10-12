@@ -9,8 +9,8 @@ use std::any::TypeId;
 #[derive(EnumIter, Debug, PartialEq, Clone, Copy, Display)]
 pub(crate) enum DataType {
     U32,
-    String,
-    Bool
+    Bool,
+    Field,
 }
 pub(crate) fn generate_random(data_type: DataType, count: usize) -> Vec<String> {
     let mut rng = rand::thread_rng();
@@ -23,19 +23,25 @@ pub(crate) fn generate_random(data_type: DataType, count: usize) -> Vec<String> 
                 results.push(random_u32.to_string());
             }
         }
-        DataType::String => {
-            for _ in 0..count {
-                let random_string: String = iter::repeat(())
-                    .map(|_| rng.sample(rand::distributions::Alphanumeric))
-                    .map(char::from)
-                    .take(30)
-                    .collect();
-                results.push(random_string);
-            }
-        }
+        // DataType::String => {
+        //     for _ in 0..count {
+        //         let random_string: String = iter::repeat(())
+        //             .map(|_| rng.sample(rand::distributions::Alphanumeric))
+        //             .map(char::from)
+        //             .take(30)
+        //             .collect();
+        //         results.push(random_string);
+        //     }
+        // }
         DataType::Bool => {
             results.push("true".to_string());
             results.push("false".to_string());
+        }
+        DataType::Field => {
+            for _ in 0..count {
+                let random_u64: u64 = rng.gen_range(0..u64::MAX);
+                results.push(random_u64.to_string());
+            }
         }
     }
     results
