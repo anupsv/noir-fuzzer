@@ -19,7 +19,7 @@ impl<'a> StructGenerator<'a> {
 
     pub(crate) fn generate_checks(&self, language: &str) -> String {
         let function_generator = FunctionGenerators::new();
-        let recursive_sum = function_generator.generate_recursive_sum(language);
+        let recursive_sum = function_generator.generate_recursive_sum(language, 5);
         let checks = match language {
             "rust" => {
                 r#"
@@ -173,7 +173,7 @@ let noir_struct = NoirStruct {
             // For Noir, place the struct outside the main function and initialization and checks inside
             file.write_all(struct_code.as_bytes())?;
             let function_generator = FunctionGenerators::new();
-            let recursive_sum = function_generator.generate_recursive_sum(language);
+            let recursive_sum = function_generator.generate_recursive_sum(language, 5);
             file.write_all(recursive_sum.as_bytes())?;
             file.write_all(b"\nfn main() {\n")?;
             file.write_all(init_code.as_bytes())?;
