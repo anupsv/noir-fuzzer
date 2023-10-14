@@ -25,6 +25,8 @@ impl<'a> StructGenerator<'a> {
             "rust" => {
                 r#"
 assert_eq!(recursive_sum(&rust_struct.field4, 0), rust_struct.field4.iter().cloned().fold(0u32, |acc, x| acc + x));
+assert_eq!(recursive_sum_pow(&rust_struct.field4, 0).0, rust_struct.field4.iter().cloned().fold(0u32, |acc, x| acc + x));
+assert_eq!(recursive_sum_pow(&rust_struct.field4, 0).1, 32);
 "#
             }
             "noir" => {
