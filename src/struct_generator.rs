@@ -20,6 +20,7 @@ impl<'a> StructGenerator<'a> {
     pub(crate) fn generate_checks(&self, language: &str) -> String {
         let function_generator = FunctionGenerators::new();
         let recursive_sum = function_generator.generate_recursive_sum(language, 5);
+        let recursive_sum_pow = function_generator.generate_recursive_sum_with_pow(language, 5);
         let checks = match language {
             "rust" => {
                 r#"
@@ -34,13 +35,16 @@ for i in 0..len {
     expected_sum = expected_sum + noir_struct.field4[i];
 }
 assert(recursive_sum(noir_struct.field4, 0) == expected_sum);
+assert(recursive_sum_pow(noir_struct.field4, 0).0 == expected_sum);
+assert(recursive_sum_with_pow(noir_struct.field4, 0).1 == 63);
 "#
             }
             _ => panic!("Unsupported language"),
         };
 
         if language == "rust" {
-            format!("{}\n{}", recursive_sum, checks)
+            let first_form = format!("{}\n{}", recursive_sum, recursive_sum_pow);
+            format!("{}\n{}", first_form, checks)
         } else {
             checks.to_string()
         }
@@ -172,7 +176,9 @@ let noir_struct = NoirStruct {
             file.write_all(struct_code.as_bytes())?;
             let function_generator = FunctionGenerators::new();
             let recursive_sum = function_generator.generate_recursive_sum(language, 5);
+            let recursive_sum_pow = function_generator.generate_recursive_sum_with_pow(language, 5);
             file.write_all(recursive_sum.as_bytes())?;
+            file.write_all(recursive_sum_pow.as_bytes())?;
             file.write_all(b"\nfn main() {\n")?;
             file.write_all(init_code.as_bytes())?;
             file.write_all(checks_code.as_bytes())?;
