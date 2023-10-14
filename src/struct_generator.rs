@@ -23,19 +23,17 @@ impl<'a> StructGenerator<'a> {
         let checks = match language {
             "rust" => {
                 r#"
-let sum = recursive_sum(&rust_struct.field4, 0);
-assert_eq!(sum, rust_struct.field4.iter().cloned().fold(0u32, |acc, x| acc + x));
+assert_eq!(recursive_sum(&rust_struct.field4, 0), rust_struct.field4.iter().cloned().fold(0u32, |acc, x| acc + x));
 "#
             }
             "noir" => {
                 r#"
-let sum = recursive_sum(noir_struct.field4, 0);
 let len = noir_struct.field4.len();
 let mut expected_sum = 0;
 for i in 0..len {
     expected_sum = expected_sum + noir_struct.field4[i];
 }
-assert(sum == expected_sum);
+assert(recursive_sum(noir_struct.field4, 0) == expected_sum);
 "#
             }
             _ => panic!("Unsupported language"),
