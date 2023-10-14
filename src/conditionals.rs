@@ -7,10 +7,37 @@ use std::fs::File;
 use std::hash::Hash;
 use std::io::prelude::*;
 use rand::Rng;
+use std::collections::BTreeMap;
 
 pub(crate) struct Conditional {
     pub(crate) name: String,
     pub(crate) input_type: DataType
+}
+
+fn generate_random_range() -> (usize, usize) {
+    let mut rng = rand::thread_rng();
+    let start = rng.gen_range(1..=1000);
+    let end = rng.gen_range(start..=1000);
+    (start, end)
+}
+
+fn generate_for_loop(language: &str, embedded_codes: &BTreeMap<&str, &str>) -> String {
+    let mut handlebars = Handlebars::new();
+
+    let (start, end) = generate_random_range();
+
+    let mut data = BTreeMap::new();
+    data.insert("start", start.to_string());
+    data.insert("end", end.to_string());
+    data.insert("embedded_code", embedded_codes.get(language).unwrap_or(&"").parse().unwrap());
+
+    let template = match language {
+        "rust" => "for i in {{start}}..{{end}} {\n  {{embedded_code}}\n}",
+        "noir" => "for i in {{start}} to {{end}} {\n  {{embedded_code}}\n}",
+        _ => panic!("Unsupported language"),
+    };
+
+    handlebars.render_template(template, &data).unwrap()
 }
 
 fn max_hex_value(strings: &Vec<String>) -> usize {
@@ -25,14 +52,6 @@ fn max_hex_value(strings: &Vec<String>) -> usize {
             format!("{:X}", max_value).len()
         },
         None => 1,
-    }
-}
-
-fn next_even(n: u32) -> u32 {
-    if n % 2 == 1 {
-        n + 1
-    } else {
-        n
     }
 }
 
