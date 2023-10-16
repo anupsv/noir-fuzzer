@@ -80,7 +80,7 @@ assert(recursive_sum_with_pow(noir_struct.field4, 0).1 == 63);
         values
     }
 
-    fn generate_struct(&self, language: &str) -> (String, Option<String>) {
+    pub(crate) fn generate_struct(&self, language: &str) -> (String, Option<String>) {
         let mut handlebars = Handlebars::new();
         let values = self.generate_random_values();
 

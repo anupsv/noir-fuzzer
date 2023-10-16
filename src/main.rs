@@ -3,6 +3,7 @@ mod random_data_creator;
 mod conditionals;
 mod struct_generator;
 mod function_generator;
+mod reference_generator;
 
 use strum::IntoEnumIterator;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -51,7 +52,10 @@ fn main() {
     // }
 
     // structs tests
-    let struct_generator = struct_generator::StructGenerator::new();
-    let rust_code = struct_generator.create_checks_and_write();
+    // let struct_generator = struct_generator::StructGenerator::new();
+    // let rust_code = struct_generator.create_checks_and_write();
+
+    let reference_generator = reference_generator::ReferenceGenerator::new();
+    let _ = reference_generator.create_checks_and_write();
 
 }
